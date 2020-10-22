@@ -101,7 +101,7 @@ func NewInitApp(
     bam.MainStoreKey,
     auth.StoreKey,
     staking.StoreKey,
-		supply.StoreKey,
+	supply.StoreKey,
     params.StoreKey,
     cosmos20types.StoreKey,
     // this line is used by starport scaffolding # 5
