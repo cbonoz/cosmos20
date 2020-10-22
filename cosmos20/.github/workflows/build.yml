@@ -1,0 +1,80 @@
+# This is a basic workflow that is manually triggered
+
+name: cosmos20
+
+# Controls when the action will run. Workflow runs when manually triggered using the UI
+# or API.
+on: [push, pull_request]
+
+# This workflow makes x86_64 binaries for mac, windows, and linux.
+
+
+jobs:
+  mac-windows:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        targetos: [windows, darwin]
+    name: cosmos20 for ${{ matrix.targetos }}
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup go
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.15
+        env:
+          GOOS: ${{ matrix.targetos }}
+
+      - name: Compile
+        run: |
+          cd cmd/cosmos20d
+          go build .
+          cd ..
+          cd cosmos20cli
+          go build .
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: cosmos20cli ${{ matrix.targetos }}
+          path: cmd/cosmos20cli/cosmos20cli
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: cosmos20d ${{ matrix.targetos }}
+          path: cmd/cosmos20d/cosmos20d
+
+  linux:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch: [arm64, riscv64, amd64]
+
+    name: cosmos20 for ${{ matrix.arch }}
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup go
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.15
+        env:
+          GOARCH: ${{ matrix.arch }}
+
+      - name: Compile
+        run: |
+          cd cmd/cosmos20d
+          go build .
+          cd ..
+          cd cosmos20cli
+          go build .
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: cosmos20cli ${{ matrix.arch }}
+          path: cmd/cosmos20cli/cosmos20cli
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: cosmos20d ${{ matrix.arch }}
+          path: cmd/cosmos20d/cosmos20d
