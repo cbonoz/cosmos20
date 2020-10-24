@@ -1,22 +1,58 @@
-package cosmos20
+package apis
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cbonoz/cosmos20/x/cosmos20/keeper"
-	"github.com/cbonoz/cosmos20/x/cosmos20/types"
-	// abci "github.com/tendermint/tendermint/abci/types"
 )
 
-// InitGenesis initialize default parameters
-// and the keeper's address to pubkey map
-func InitGenesis(ctx sdk.Context, k keeper.Keeper /* TODO: Define what keepers the module needs */, data types.GenesisState) {
-	// TODO: Define logic for when you would like to initalize a new genesis
+// InitGenesis sets distribution information for genesis.
+func InitGenesis(ctx sdk.Context, keeper Keeper, gs GenesisState) {
+	// Set the requests and oracles from params
+	keeper.SetParams(ctx, gs.Params)
+
+	// Iterate through the posted prices and set them in the store if they are not expired
+	for _, pp := range gs.PostedPrices {
+		if pp.Expiry.After(ctx.BlockTime()) {
+			_, err := keeper.SetPrice(ctx, pp.OracleAddress, pp.RequestID, pp.Price, pp.Expiry)
+			if err != nil {
+				panic(err)
+			}
+		}
+	}
+	params := keeper.GetParams(ctx)
+
+	// Set the current price (if any) based on what's now in the store
+	for _, request := range params.Requests {
+		if !request.Active {
+			continue
+		}
+		rps, err := keeper.GetRawPrices(ctx, request.RequestID)
+		if err != nil {
+			panic(err)
+		}
+		if len(rps) == 0 {
+			continue
+		}
+		err = keeper.SetCurrentPrices(ctx, request.RequestID)
+		if err != nil {
+			panic(err)
+		}
+	}
 }
 
-// ExportGenesis writes the current store values
-// to a genesis file, which can be imported again
-// with InitGenesis
-func ExportGenesis(ctx sdk.Context, k keeper.Keeper) (data types.GenesisState) {
-	// TODO: Define logic for exporting state
-	return types.NewGenesisState()
+// ExportGenesis returns a GenesisState for a given context and keeper.
+func ExportGenesis(ctx sdk.Context, keeper Keeper) GenesisState {
+
+	// Get the params for requests and oracles
+	params := keeper.GetParams(ctx)
+
+	var postedPrices []PostedPrice
+	for _, request := range keeper.GetRequests(ctx) {
+		pp, err := keeper.GetRawPrices(ctx, request.RequestID)
+		if err != nil {
+			panic(err)
+		}
+		postedPrices = append(postedPrices, pp...)
+	}
+
+	return NewGenesisState(params, postedPrices)
 }

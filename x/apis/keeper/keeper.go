@@ -2,32 +2,42 @@ package keeper
 
 import (
 	"fmt"
+	"sort"
+	"time"
 
 	"github.com/tendermint/tendermint/libs/log"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/bank"
-	"github.com/cbonoz/cosmos20/x/cosmos20/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/cosmos/cosmos-sdk/x/params/subspace"
+
+	"github.com/cbonoz/cosmos20/x/apis/types"
 )
 
-// Keeper of the cosmos20 store
+// Keeper struct for apis module
 type Keeper struct {
-	CoinKeeper bank.Keeper
-	storeKey   sdk.StoreKey
-	cdc        *codec.Codec
-	// paramspace types.ParamSubspace
+	// key used to access the stores from Context
+	key sdk.StoreKey
+	// Codec for binary encoding/decoding
+	cdc *codec.Codec
+	// The reference to the Paramstore to get and set apis specific params
+	paramSubspace subspace.Subspace
 }
 
-// NewKeeper creates a cosmos20 keeper
-func NewKeeper(coinKeeper bank.Keeper, cdc *codec.Codec, key sdk.StoreKey) Keeper {
-	keeper := Keeper{
-		CoinKeeper: coinKeeper,
-		storeKey:   key,
-		cdc:        cdc,
-		// paramspace: paramspace.WithKeyTable(types.ParamKeyTable()),
+// NewKeeper returns a new keeper for the apis module.
+func NewKeeper(
+	cdc *codec.Codec, key sdk.StoreKey, paramstore subspace.Subspace,
+) Keeper {
+	if !paramstore.HasKeyTable() {
+		paramstore = paramstore.WithKeyTable(types.ParamKeyTable())
 	}
-	return keeper
+
+	return Keeper{
+		cdc:           cdc,
+		key:           key,
+		paramSubspace: paramstore,
+	}
 }
 
 // Logger returns a module-specific logger.
@@ -35,25 +45,173 @@ func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", fmt.Sprintf("x/%s", types.ModuleName))
 }
 
-// Get returns the pubkey from the adddress-pubkey relation
-// func (k Keeper) Get(ctx sdk.Context, key string) (/* TODO: Fill out this type */, error) {
-// 	store := ctx.KVStore(k.storeKey)
-// 	var item /* TODO: Fill out this type */
-// 	byteKey := []byte(key)
-// 	err := k.cdc.UnmarshalBinaryLengthPrefixed(store.Get(byteKey), &item)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	return item, nil
-// }
+// SetPrice updates the posted price for a specific oracle
+func (k Keeper) SetPrice(
+	ctx sdk.Context,
+	oracle sdk.AccAddress,
+	requestID string,
+	price sdk.Dec,
+	expiry time.Time) (types.PostedPrice, error) {
+	// If the expiry is less than or equal to the current blockheight, we consider the price valid
+	if !expiry.After(ctx.BlockTime()) {
+		return types.PostedPrice{}, types.ErrExpired
+	}
 
-// func (k Keeper) set(ctx sdk.Context, key string, value /* TODO: fill out this type */ ) {
-// 	store := ctx.KVStore(k.storeKey)
-// 	bz := k.cdc.MustMarshalBinaryLengthPrefixed(value)
-// 	store.Set([]byte(key), bz)
-// }
+	store := ctx.KVStore(k.key)
+	prices, err := k.GetRawPrices(ctx, requestID)
+	if err != nil {
+		return types.PostedPrice{}, err
+	}
+	var index int
+	found := false
+	for i := range prices {
+		if prices[i].OracleAddress.Equals(oracle) {
+			index = i
+			found = true
+			break
+		}
+	}
 
-// func (k Keeper) delete(ctx sdk.Context, key string) {
-// 	store := ctx.KVStore(k.storeKey)
-// 	store.Delete([]byte(key))
-// }
+	// set the price for that particular oracle
+	if found {
+		prices[index] = types.NewPostedPrice(requestID, oracle, price, expiry)
+	} else {
+		prices = append(prices, types.NewPostedPrice(requestID, oracle, price, expiry))
+		index = len(prices) - 1
+	}
+
+	// Emit an event containing the oracle's new price
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(
+			types.EventTypeOracleUpdatedPrice,
+			sdk.NewAttribute(types.AttributeRequestID, requestID),
+			sdk.NewAttribute(types.AttributeOracle, oracle.String()),
+			sdk.NewAttribute(types.AttributeRequestPrice, price.String()),
+			sdk.NewAttribute(types.AttributeExpiry, expiry.UTC().String()),
+		),
+	)
+
+	store.Set(types.RawPriceKey(requestID), k.cdc.MustMarshalBinaryBare(prices))
+	return prices[index], nil
+}
+
+// SetCurrentPrices updates the price of an asset to the median of all valid oracle inputs
+func (k Keeper) SetCurrentPrices(ctx sdk.Context, requestID string) error {
+	_, ok := k.GetRequest(ctx, requestID)
+	if !ok {
+		return sdkerrors.Wrap(types.ErrInvalidRequest, requestID)
+	}
+	// store current price
+	validPrevPrice := true
+	prevPrice, err := k.GetCurrentPrice(ctx, requestID)
+	if err != nil {
+		validPrevPrice = false
+	}
+
+	prices, err := k.GetRawPrices(ctx, requestID)
+	if err != nil {
+		return err
+	}
+	var notExpiredPrices types.CurrentPrices
+	// filter out expired prices
+	for _, v := range prices {
+		if v.Expiry.After(ctx.BlockTime()) {
+			notExpiredPrices = append(notExpiredPrices, types.NewCurrentPrice(v.RequestID, v.Price))
+		}
+	}
+
+	if len(notExpiredPrices) == 0 {
+		// NOTE: The current price stored will continue storing the most recent (expired)
+		// price if this is not set.
+		// This zero's out the current price stored value for that request and ensures
+		// that CDP methods that GetCurrentPrice will return error.
+		k.setCurrentPrice(ctx, requestID, types.CurrentPrice{})
+		return types.ErrNoValidPrice
+	}
+
+	medianPrice := k.CalculateMedianPrice(ctx, notExpiredPrices)
+
+	// check case that request price was not set in genesis
+	if validPrevPrice && !medianPrice.Equal(prevPrice.Price) {
+		// only emit event if price has changed
+		ctx.EventManager().EmitEvent(
+			sdk.NewEvent(
+				types.EventTypeRequestPriceUpdated,
+				sdk.NewAttribute(types.AttributeRequestID, requestID),
+				sdk.NewAttribute(types.AttributeRequestPrice, medianPrice.String()),
+			),
+		)
+	}
+
+	currentPrice := types.NewCurrentPrice(requestID, medianPrice)
+	k.setCurrentPrice(ctx, requestID, currentPrice)
+
+	return nil
+}
+
+func (k Keeper) setCurrentPrice(ctx sdk.Context, requestID string, currentPrice types.CurrentPrice) {
+	store := ctx.KVStore(k.key)
+	store.Set(types.CurrentPriceKey(requestID), k.cdc.MustMarshalBinaryBare(currentPrice))
+}
+
+// CalculateMedianPrice calculates the median prices for the input prices.
+func (k Keeper) CalculateMedianPrice(ctx sdk.Context, prices types.CurrentPrices) sdk.Dec {
+	l := len(prices)
+
+	if l == 1 {
+		// Return immediately if there's only one price
+		return prices[0].Price
+	}
+	// sort the prices
+	sort.Slice(prices, func(i, j int) bool {
+		return prices[i].Price.LT(prices[j].Price)
+	})
+	// for even numbers of prices, the median is calculated as the mean of the two middle prices
+	if l%2 == 0 {
+		median := k.calculateMeanPrice(ctx, prices[l/2-1:l/2+1])
+		return median
+	}
+	// for odd numbers of prices, return the middle element
+	return prices[l/2].Price
+
+}
+
+func (k Keeper) calculateMeanPrice(ctx sdk.Context, prices types.CurrentPrices) sdk.Dec {
+	sum := prices[0].Price.Add(prices[1].Price)
+	mean := sum.Quo(sdk.NewDec(2))
+	return mean
+}
+
+// GetCurrentPrice fetches the current median price of all oracles for a specific request
+func (k Keeper) GetCurrentPrice(ctx sdk.Context, requestID string) (types.CurrentPrice, error) {
+	store := ctx.KVStore(k.key)
+	bz := store.Get(types.CurrentPriceKey(requestID))
+
+	if bz == nil {
+		return types.CurrentPrice{}, types.ErrNoValidPrice
+	}
+	var price types.CurrentPrice
+	err := k.cdc.UnmarshalBinaryBare(bz, &price)
+	if err != nil {
+		return types.CurrentPrice{}, err
+	}
+	if price.Price.Equal(sdk.ZeroDec()) {
+		return types.CurrentPrice{}, types.ErrNoValidPrice
+	}
+	return price, nil
+}
+
+// GetRawPrices fetches the set of all prices posted by oracles for an asset
+func (k Keeper) GetRawPrices(ctx sdk.Context, requestID string) (types.PostedPrices, error) {
+	store := ctx.KVStore(k.key)
+	bz := store.Get(types.RawPriceKey(requestID))
+	if bz == nil {
+		return types.PostedPrices{}, nil
+	}
+	var prices types.PostedPrices
+	err := k.cdc.UnmarshalBinaryBare(bz, &prices)
+	if err != nil {
+		return types.PostedPrices{}, err
+	}
+	return prices, nil
+}

@@ -1,26 +1,48 @@
 package types
 
-// GenesisState - all cosmos20 state that must be provided at genesis
+import (
+	"bytes"
+)
+
+// GenesisState - apis state that must be provided at genesis
 type GenesisState struct {
-	// TODO: Fill out what is needed by the module for genesis
+	Params       Params       `json:"params" yaml:"params"`
+	PostedPrices PostedPrices `json:"posted_prices" yaml:"posted_prices"`
 }
 
-// NewGenesisState creates a new GenesisState object
-func NewGenesisState( /* TODO: Fill out with what is needed for genesis state */ ) GenesisState {
+// NewGenesisState creates a new genesis state for the apis module
+func NewGenesisState(p Params, pp []PostedPrice) GenesisState {
 	return GenesisState{
-		// TODO: Fill out according to your genesis state
+		Params:       p,
+		PostedPrices: pp,
 	}
 }
 
-// DefaultGenesisState - default GenesisState used by Cosmos Hub
+// DefaultGenesisState defines default GenesisState for apis
 func DefaultGenesisState() GenesisState {
-	return GenesisState{
-		// TODO: Fill out according to your genesis state, these values will be initialized but empty
-	}
+	return NewGenesisState(
+		DefaultParams(),
+		[]PostedPrice{},
+	)
 }
 
-// ValidateGenesis validates the cosmos20 genesis parameters
-func ValidateGenesis(data GenesisState) error {
-	// TODO: Create a sanity check to make sure the state conforms to the modules needs
-	return nil
+// Equal checks whether two gov GenesisState structs are equivalent
+func (gs GenesisState) Equal(gs2 GenesisState) bool {
+	b1 := ModuleCdc.MustMarshalBinaryBare(gs)
+	b2 := ModuleCdc.MustMarshalBinaryBare(gs2)
+	return bytes.Equal(b1, b2)
+}
+
+// IsEmpty returns true if a GenesisState is empty
+func (gs GenesisState) IsEmpty() bool {
+	return gs.Equal(GenesisState{})
+}
+
+// Validate performs basic validation of genesis data returning an
+// error for any failed validation criteria.
+func (gs GenesisState) Validate() error {
+	if err := gs.Params.Validate(); err != nil {
+		return err
+	}
+	return gs.PostedPrices.Validate()
 }

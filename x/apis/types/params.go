@@ -2,56 +2,66 @@ package types
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/cosmos/cosmos-sdk/x/params"
 )
 
-// Default parameter namespace
-const (
-	DefaultParamspace = ModuleName
-	// TODO: Define your default parameters
-)
-
-// Parameter store keys
+// Parameter keys
 var (
-	// TODO: Define your keys for the parameter store
-	// KeyParamName          = []byte("ParamName")
+	KeyRequests     = []byte("Requests")
+	DefaultRequests = Requests{}
 )
 
-// ParamKeyTable for cosmos20 module
+// Params params for apis. Can be altered via governance
+type Params struct {
+	Requests Requests `json:"requests" yaml:"requests"` //  Array containing the requests supported by the apis
+}
+
+// NewParams creates a new AssetParams object
+func NewParams(requests Requests) Params {
+	return Params{
+		Requests: requests,
+	}
+}
+
+// DefaultParams default params for apis
+func DefaultParams() Params {
+	return NewParams(DefaultRequests)
+}
+
+// ParamKeyTable Key declaration for parameters
 func ParamKeyTable() params.KeyTable {
 	return params.NewKeyTable().RegisterParamSet(&Params{})
 }
 
-// Params - used for initializing default parameter for cosmos20 at genesis
-type Params struct {
-	// TODO: Add your Paramaters to the Paramter struct
-	// KeyParamName string `json:"key_param_name"`
-}
-
-// NewParams creates a new Params object
-func NewParams(/* TODO: Pass in the paramters*/) Params {
-	return Params{
-		// TODO: Create your Params Type
-	}
-}
-
-// String implements the stringer interface for Params
-func (p Params) String() string {
-	return fmt.Sprintf(`
-	// TODO: Return all the params as a string
-	`, )
-}
-
-// ParamSetPairs - Implements params.ParamSet
+// ParamSetPairs implements the ParamSet interface and returns all the key/value pairs
+// pairs of apis module's parameters.
 func (p *Params) ParamSetPairs() params.ParamSetPairs {
 	return params.ParamSetPairs{
-		// TODO: Pair your key with the param
-		// params.NewParamSetPair(KeyParamName, &p.ParamName),
+		params.NewParamSetPair(KeyRequests, &p.Requests, validateRequestParams),
 	}
 }
 
-// DefaultParams defines the parameters for this module
-func DefaultParams() Params {
-	return NewParams( /* TODO: Pass in your default Params */ )
+// String implements fmt.stringer
+func (p Params) String() string {
+	out := "Params:\n"
+	for _, a := range p.Requests {
+		out += fmt.Sprintf("%s\n", a.String())
+	}
+	return strings.TrimSpace(out)
+}
+
+// Validate ensure that params have valid values
+func (p Params) Validate() error {
+	return validateRequestParams(p.Requests)
+}
+
+func validateRequestParams(i interface{}) error {
+	requests, ok := i.(Requests)
+	if !ok {
+		return fmt.Errorf("invalid parameter type: %T", i)
+	}
+
+	return requests.Validate()
 }

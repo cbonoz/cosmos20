@@ -1,18 +1,21 @@
-# cosmos20 module specification
+<!--
+order: 0
+title: "Pricefeed Overview"
+parent:
+  title: "apis"
+-->
 
-## Abstract
+# `apis`
 
-<!-- TODO: Create a abstract definition of what this module does, what functionality does it enable and how it can be used. -->
-
-## Contents
-
-// TODO: Create the below files if they are needed.
+<!-- TOC -->
 
 1. **[Concepts](01_concepts.md)**
 2. **[State](02_state.md)**
 3. **[Messages](03_messages.md)**
-4. **[Begin-Block](04_begin_block.md)**
-5. **[End-Block](05_end_block.md)**
-6. **[Hooks](06_hooks.md)**
-7. **[Events](07_events.md)**
-8. **[Parameters](08_params.md)**
+4. **[Events](04_events.md)**
+5. **[Params](05_params.md)**
+6. **[EndBlock](06_end_block.md)**
+
+## Abstract
+
+`x/apis` is an implementation of a Cosmos SDK Module that handles the posting of prices for various requests by a group of whitelisted oracles. At the end of each block, the median price of all oracle posted prices is determined for each request and stored.

@@ -1,19 +1,23 @@
-package cosmos20
+package apis
 
 import (
+	"errors"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	abci "github.com/tendermint/tendermint/abci/types"
-	"github.com/cbonoz/cosmos20/x/cosmos20/keeper"
-	// abci "github.com/tendermint/tendermint/abci/types"
+	"github.com/cbonoz/cosmos20/x/apis/types"
 )
 
-// BeginBlocker check for infraction evidence or downtime of validators
-// on every begin block
-func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k keeper.Keeper) {
-	// 	TODO: fill out if your application requires beginblock, if not you can delete this function
-}
+// EndBlocker updates the current apis
+func EndBlocker(ctx sdk.Context, k Keeper) {
+	// Update the current price of each asset.
+	for _, request := range k.GetRequests(ctx) {
+		if !request.Active {
+			continue
+		}
 
-// EndBlocker called every block, process inflation, update validator set.
-func EndBlocker(ctx sdk.Context, k keeper.Keeper) {
-	// 	TODO: fill out if your application requires endblock, if not you can delete this function
+		err := k.SetCurrentPrices(ctx, request.RequestID)
+		if err != nil && !errors.Is(err, types.ErrNoValidPrice) {
+			panic(err)
+		}
+	}
 }

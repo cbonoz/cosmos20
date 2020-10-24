@@ -2,146 +2,169 @@ package apis
 
 import (
 	"encoding/json"
+	"math/rand"
 
 	"github.com/gorilla/mux"
 	"github.com/spf13/cobra"
-
-	abci "github.com/tendermint/tendermint/abci/types"
 
 	"github.com/cosmos/cosmos-sdk/client/context"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/cosmos/cosmos-sdk/x/bank"
-	"github.com/cbonoz/cosmos20/x/cosmos20/client/cli"
-	"github.com/cbonoz/cosmos20/x/cosmos20/client/rest"
-	"github.com/cbonoz/cosmos20/x/cosmos20/keeper"
-	"github.com/cbonoz/cosmos20/x/cosmos20/types"
+	"github.com/cosmos/cosmos-sdk/x/auth"
+	sim "github.com/cosmos/cosmos-sdk/x/simulation"
+
+	abci "github.com/tendermint/tendermint/abci/types"
+
+	"github.com/cbonoz/cosmos20/x/apis/client/cli"
+	"github.com/cbonoz/cosmos20/x/apis/client/rest"
+	"github.com/cbonoz/cosmos20/x/apis/simulation"
 )
 
-// Type check to ensure the interface is properly implemented
 var (
-	_ module.AppModule      = AppModule{}
-	_ module.AppModuleBasic = AppModuleBasic{}
+	_ module.AppModule           = AppModule{}
+	_ module.AppModuleBasic      = AppModuleBasic{}
+	_ module.AppModuleSimulation = AppModule{}
 )
 
-// AppModuleBasic defines the basic application module used by the cosmos20 module.
+// AppModuleBasic app module basics object
 type AppModuleBasic struct{}
 
-// Name returns the cosmos20 module's name.
+// Name get module name
 func (AppModuleBasic) Name() string {
-	return types.ModuleName
+	return ModuleName
 }
 
-// RegisterCodec registers the cosmos20 module's types for the given codec.
+// RegisterCodec register module codec
 func (AppModuleBasic) RegisterCodec(cdc *codec.Codec) {
-	types.RegisterCodec(cdc)
+	RegisterCodec(cdc)
 }
 
-// DefaultGenesis returns default genesis state as raw bytes for the cosmos20
-// module.
+// DefaultGenesis default genesis state
 func (AppModuleBasic) DefaultGenesis() json.RawMessage {
-	return types.ModuleCdc.MustMarshalJSON(types.DefaultGenesisState())
+	return ModuleCdc.MustMarshalJSON(DefaultGenesisState())
 }
 
-// ValidateGenesis performs genesis state validation for the cosmos20 module.
+// ValidateGenesis module validate genesis
 func (AppModuleBasic) ValidateGenesis(bz json.RawMessage) error {
-	var data types.GenesisState
-	err := types.ModuleCdc.UnmarshalJSON(bz, &data)
+	var gs GenesisState
+	err := ModuleCdc.UnmarshalJSON(bz, &gs)
 	if err != nil {
 		return err
 	}
-	return types.ValidateGenesis(data)
+	return gs.Validate()
 }
 
-// RegisterRESTRoutes registers the REST routes for the cosmos20 module.
+// RegisterRESTRoutes register rest routes
 func (AppModuleBasic) RegisterRESTRoutes(ctx context.CLIContext, rtr *mux.Router) {
 	rest.RegisterRoutes(ctx, rtr)
 }
 
-// GetTxCmd returns the root tx command for the cosmos20 module.
+// GetTxCmd get the root tx command of this module
 func (AppModuleBasic) GetTxCmd(cdc *codec.Codec) *cobra.Command {
-	return cli.GetTxCmd(cdc)
+	return cli.GetTxCmd(StoreKey, cdc)
 }
 
-// GetQueryCmd returns no root query command for the cosmos20 module.
+// GetQueryCmd get the root query command of this module
 func (AppModuleBasic) GetQueryCmd(cdc *codec.Codec) *cobra.Command {
-	return cli.GetQueryCmd(types.StoreKey, cdc)
+	return cli.GetQueryCmd(StoreKey, cdc)
 }
 
 //____________________________________________________________________________
 
-// AppModule implements an application module for the cosmos20 module.
+// AppModule app module type
 type AppModule struct {
 	AppModuleBasic
 
-	keeper     keeper.Keeper
-	coinKeeper bank.Keeper
-	// TODO: Add keepers that your application depends on
-
+	keeper        Keeper
+	accountKeeper auth.AccountKeeper
 }
 
 // NewAppModule creates a new AppModule object
-func NewAppModule(k keeper.Keeper, bankKeeper bank.Keeper) AppModule {
+func NewAppModule(keeper Keeper, accountKeeper auth.AccountKeeper) AppModule {
 	return AppModule{
 		AppModuleBasic: AppModuleBasic{},
-		keeper:         k,
-		coinKeeper:     bankKeeper,
-		// TODO: Add keepers that your application depends on
+		keeper:         keeper,
+		accountKeeper:  accountKeeper,
 	}
 }
 
-// Name returns the cosmos20 module's name.
+// Name module name
 func (AppModule) Name() string {
-	return types.ModuleName
+	return ModuleName
 }
 
-// RegisterInvariants registers the cosmos20 module invariants.
-func (am AppModule) RegisterInvariants(_ sdk.InvariantRegistry) {}
+// RegisterInvariants register module invariants
+func (AppModule) RegisterInvariants(_ sdk.InvariantRegistry) {}
 
-// Route returns the message routing key for the cosmos20 module.
+// Route module message route name
 func (AppModule) Route() string {
-	return types.RouterKey
+	return ModuleName
 }
 
-// NewHandler returns an sdk.Handler for the cosmos20 module.
+// NewHandler module handler
 func (am AppModule) NewHandler() sdk.Handler {
 	return NewHandler(am.keeper)
 }
 
-// QuerierRoute returns the cosmos20 module's querier route name.
+// QuerierRoute module querier route name
 func (AppModule) QuerierRoute() string {
-	return types.QuerierRoute
+	return ModuleName
 }
 
-// NewQuerierHandler returns the cosmos20 module sdk.Querier.
+// NewQuerierHandler module querier
 func (am AppModule) NewQuerierHandler() sdk.Querier {
-	return keeper.NewQuerier(am.keeper)
+	return NewQuerier(am.keeper)
 }
 
-// InitGenesis performs genesis initialization for the cosmos20 module. It returns
-// no validator updates.
+// BeginBlock module begin-block
+func (AppModule) BeginBlock(_ sdk.Context, _ abci.RequestBeginBlock) {}
+
+// EndBlock module end-block
+func (am AppModule) EndBlock(ctx sdk.Context, _ abci.RequestEndBlock) []abci.ValidatorUpdate {
+	EndBlocker(ctx, am.keeper)
+	return []abci.ValidatorUpdate{}
+}
+
+// InitGenesis module init-genesis
 func (am AppModule) InitGenesis(ctx sdk.Context, data json.RawMessage) []abci.ValidatorUpdate {
-	var genesisState types.GenesisState
-	types.ModuleCdc.MustUnmarshalJSON(data, &genesisState)
+	var genesisState GenesisState
+	ModuleCdc.MustUnmarshalJSON(data, &genesisState)
 	InitGenesis(ctx, am.keeper, genesisState)
 	return []abci.ValidatorUpdate{}
 }
 
-// ExportGenesis returns the exported genesis state as raw bytes for the cosmos20
-// module.
+// ExportGenesis module export genesis
 func (am AppModule) ExportGenesis(ctx sdk.Context) json.RawMessage {
 	gs := ExportGenesis(ctx, am.keeper)
-	return types.ModuleCdc.MustMarshalJSON(gs)
+	return ModuleCdc.MustMarshalJSON(gs)
 }
 
-// BeginBlock returns the begin blocker for the cosmos20 module.
-func (am AppModule) BeginBlock(ctx sdk.Context, req abci.RequestBeginBlock) {
-	BeginBlocker(ctx, req, am.keeper)
+//____________________________________________________________________________
+
+// AppModuleSimulation functions
+
+// GenerateGenesisState creates a randomized GenState of the price feed module
+func (AppModuleBasic) GenerateGenesisState(simState *module.SimulationState) {
+	simulation.RandomizedGenState(simState)
 }
 
-// EndBlock returns the end blocker for the cosmos20 module. It returns no validator
-// updates.
-func (AppModule) EndBlock(_ sdk.Context, _ abci.RequestEndBlock) []abci.ValidatorUpdate {
-	return []abci.ValidatorUpdate{}
+// ProposalContents doesn't return any content functions for governance proposals.
+func (AppModuleBasic) ProposalContents(_ module.SimulationState) []sim.WeightedProposalContent {
+	return nil
+}
+
+// RandomizedParams returns nil because price feed has no params.
+func (AppModuleBasic) RandomizedParams(r *rand.Rand) []sim.ParamChange {
+	return simulation.ParamChanges(r)
+}
+
+// RegisterStoreDecoder registers a decoder for price feed module's types
+func (AppModuleBasic) RegisterStoreDecoder(sdr sdk.StoreDecoderRegistry) {
+	sdr[StoreKey] = simulation.DecodeStore
+}
+
+// WeightedOperations returns the all the price feed module operations with their respective weights.
+func (am AppModule) WeightedOperations(simState module.SimulationState) []sim.WeightedOperation {
+	return simulation.WeightedOperations(simState.AppParams, simState.Cdc, am.accountKeeper, am.keeper)
 }
