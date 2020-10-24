@@ -33,14 +33,14 @@ func GetTxCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 	}
 
 	apisTxCmd.AddCommand(flags.PostCommands(
-		GetCmdPostPrice(cdc),
+		GetCmdPostResponse(cdc),
 	)...)
 
 	return apisTxCmd
 }
 
-// GetCmdPostPrice cli command for posting prices.
-func GetCmdPostPrice(cdc *codec.Codec) *cobra.Command {
+// GetCmdPostResponse cli command for posting prices.
+func GetCmdPostResponse(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
 		Use:   "postprice [requestID] [price] [expiry]",
 		Short: "post the latest price for a particular request with a given expiry as a UNIX time",
@@ -68,7 +68,7 @@ func GetCmdPostPrice(cdc *codec.Codec) *cobra.Command {
 
 			expiry := tmtime.Canonical(time.Unix(expiryInt, 0))
 
-			msg := types.NewMsgPostPrice(cliCtx.GetFromAddress(), args[0], price, expiry)
+			msg := types.NewMsgPostResponse(cliCtx.GetFromAddress(), args[0], price, expiry)
 			if err = msg.ValidateBasic(); err != nil {
 				return err
 			}

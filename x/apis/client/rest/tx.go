@@ -23,7 +23,7 @@ func registerTxRoutes(cliCtx context.CLIContext, r *mux.Router) {
 
 func postPriceHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req PostPriceReq
+		var req PostResponseReq
 
 		if !rest.ReadRESTReq(w, r, cliCtx.Codec, &req) {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, "failed to parse request")
@@ -60,7 +60,7 @@ func postPriceHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 
 		expiry := tmtime.Canonical(time.Unix(expiryInt, 0))
 
-		msg := types.NewMsgPostPrice(addr, req.RequestID, price, expiry)
+		msg := types.NewMsgPostResponse(addr, req.RequestID, price, expiry)
 		if err = msg.ValidateBasic(); err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())
 			return

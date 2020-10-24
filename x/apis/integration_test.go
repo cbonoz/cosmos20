@@ -14,7 +14,6 @@ func NewPricefeedGenStateMulti() app.GenesisState {
 		Params: apis.Params{
 			Requests: []apis.Request{
 				{RequestID: "btc:usd", BaseAsset: "btc", QuoteAsset: "usd", Oracles: []sdk.AccAddress{}, Active: true},
-				{RequestID: "xrp:usd", BaseAsset: "xrp", QuoteAsset: "usd", Oracles: []sdk.AccAddress{}, Active: true},
 			},
 		},
 		PostedPrices: []apis.PostedPrice{

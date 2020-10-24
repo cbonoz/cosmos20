@@ -9,12 +9,6 @@ const (
 	QueryGetParams = "parameters"
 	// QueryRequests command for assets query
 	QueryRequests = "requests"
-	// QueryOracles command for oracles query
-	QueryOracles = "oracles"
-	// QueryRawPrices command for raw price queries
-	QueryRawPrices = "rawprices"
-	// QueryPrice command for price queries
-	QueryPrice = "price"
 )
 
 // QueryWithRequestIDParams fields for querying information from a specific request

@@ -27,7 +27,7 @@ const (
 	QueryRawPrices              = types.QueryRawPrices
 	RouterKey                   = types.RouterKey
 	StoreKey                    = types.StoreKey
-	TypeMsgPostPrice            = types.TypeMsgPostPrice
+	TypeMsgPostResponse            = types.TypeMsgPostResponse
 )
 
 var (
@@ -40,7 +40,7 @@ var (
 	NewCurrentPrice            = types.NewCurrentPrice
 	NewGenesisState            = types.NewGenesisState
 	NewRequest                  = types.NewRequest
-	NewMsgPostPrice            = types.NewMsgPostPrice
+	NewMsgPostResponse            = types.NewMsgPostResponse
 	NewParams                  = types.NewParams
 	NewPostedPrice             = types.NewPostedPrice
 	NewQueryWithRequestIDParams = types.NewQueryWithRequestIDParams
@@ -64,15 +64,10 @@ var (
 
 type (
 	Keeper                  = keeper.Keeper
-	CurrentPrice            = types.CurrentPrice
-	CurrentPrices           = types.CurrentPrices
 	GenesisState            = types.GenesisState
 	Request                  = types.Request
 	Requests                 = types.Requests
-	MsgPostPrice            = types.MsgPostPrice
 	Params                  = types.Params
-	PostedPrice             = types.PostedPrice
-	PostedPrices            = types.PostedPrices
 	QueryWithRequestIDParams = types.QueryWithRequestIDParams
 	SortDecs                = types.SortDecs
 )

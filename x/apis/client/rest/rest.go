@@ -11,8 +11,8 @@ const (
 	RestRequestID = "request_id"
 )
 
-// PostPriceReq defines the properties of a PostPrice request's body.
-type PostPriceReq struct {
+// PostResponseReq defines the properties of a PostResponse request's body.
+type PostResponseReq struct {
 	BaseReq  rest.BaseReq `json:"base_req"`
 	RequestID string       `json:"request_id"`
 	Price    string       `json:"price"`

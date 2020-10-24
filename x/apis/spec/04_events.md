@@ -6,7 +6,7 @@ order: 4
 
 The `x/apis` module emits the following events:
 
-## MsgPostPrice
+## MsgPostResponse
 
 | Type                 | Attribute Key | Attribute Value    |
 | -------------------- | ------------- | ------------------ |

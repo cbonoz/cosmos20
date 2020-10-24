@@ -18,13 +18,13 @@ func TestMsgPlaceBid_ValidateBasic(t *testing.T) {
 
 	tests := []struct {
 		name       string
-		msg        MsgPostPrice
+		msg        MsgPostResponse
 		expectPass bool
 	}{
-		{"normal", MsgPostPrice{addr, "xrp", price, expiry}, true},
-		{"emptyAddr", MsgPostPrice{sdk.AccAddress{}, "xrp", price, expiry}, false},
-		{"emptyAsset", MsgPostPrice{addr, "", price, expiry}, false},
-		{"negativePrice", MsgPostPrice{addr, "xrp", negativePrice, expiry}, false},
+		{"normal", MsgPostResponse{addr, "xrp", price, expiry}, true},
+		{"emptyAddr", MsgPostResponse{sdk.AccAddress{}, "xrp", price, expiry}, false},
+		{"emptyAsset", MsgPostResponse{addr, "", price, expiry}, false},
+		{"negativePrice", MsgPostResponse{addr, "xrp", negativePrice, expiry}, false},
 	}
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {

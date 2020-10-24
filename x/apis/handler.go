@@ -10,8 +10,8 @@ func NewHandler(k Keeper) sdk.Handler {
 	return func(ctx sdk.Context, msg sdk.Msg) (*sdk.Result, error) {
 		ctx = ctx.WithEventManager(sdk.NewEventManager())
 		switch msg := msg.(type) {
-		case MsgPostPrice:
-			return HandleMsgPostPrice(ctx, k, msg)
+		case MsgPostResponse:
+			return HandleMsgPostResponse(ctx, k, msg)
 		default:
 			return nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "unrecognized %s message type: %T", ModuleName, msg)
 		}
@@ -21,11 +21,11 @@ func NewHandler(k Keeper) sdk.Handler {
 // price feed questions:
 // do proposers need to post the round in the message? If not, how do we determine the round?
 
-// HandleMsgPostPrice handles prices posted by oracles
-func HandleMsgPostPrice(
+// HandleMsgPostResponse handles prices posted by oracles
+func HandleMsgPostResponse(
 	ctx sdk.Context,
 	k Keeper,
-	msg MsgPostPrice) (*sdk.Result, error) {
+	msg MsgPostResponse) (*sdk.Result, error) {
 
 	_, err := k.GetOracle(ctx, msg.RequestID, msg.From)
 	if err != nil {
