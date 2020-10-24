@@ -43,7 +43,7 @@ var (
 		supply.AppModuleBasic{},
 		cosmos20.AppModuleBasic{},
 		apis.AppModuleBasic{},
-    // this line is used by starport scaffolding # 2
+		// this line is used by starport scaffolding # 2
 	)
 
 	maccPerms = map[string][]string{

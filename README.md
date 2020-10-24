@@ -1,5 +1,4 @@
 <!--CosmosHub API Module
----
 
 ### Concept
 
@@ -8,11 +7,18 @@ Cosmos API module (apis) - interact with arbitrary api's from your cosmos app us
 Going after the build a module challenge for the cosmos hackatom contest.
 
 ### Use cases
-* Make api calls in response to key events such as block starts or ends, arbitrary messages, or ad-hoc queries.
-* Perform programmatic access to other services such as other blockchains, third party api's
-* Provide a simple interface to configure a set of API-based commands.
--->
 
+- Make api calls in response to key events such as block starts or ends, arbitrary messages, or ad-hoc queries.
+- Perform programmatic access to other services such as other blockchains, third party api's
+- Provide a simple interface to configure a set of API-based commands.
+
+### Usage
+
+1. Add the /x/apis module to your app
+2. Configure the module with your external API's and desired parameters.
+3. Create subscribers to process emitted events.
+
+-->
 
 ### Dev notes
 
