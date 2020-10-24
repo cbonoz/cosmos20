@@ -23,6 +23,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/staking"
 	"github.com/cosmos/cosmos-sdk/x/supply"
 	"github.com/cbonoz/cosmos20/x/cosmos20"
+	"github.com/cbonoz/cosmos20/x/apis"
 	cosmos20keeper "github.com/cbonoz/cosmos20/x/cosmos20/keeper"
 	cosmos20types "github.com/cbonoz/cosmos20/x/cosmos20/types"
   // this line is used by starport scaffolding # 1
@@ -41,6 +42,7 @@ var (
 		params.AppModuleBasic{},
 		supply.AppModuleBasic{},
 		cosmos20.AppModuleBasic{},
+		apis.AppModuleBasic{},
     // this line is used by starport scaffolding # 2
 	)
 
