@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"strings"
-	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
@@ -13,19 +12,19 @@ import (
 type Request struct {
 	// TODO: rename to ID
 	RequestID   string           `json:"request_id" yaml:"request_id"`
-	BaseAsset  string           `json:"base_asset" yaml:"base_asset"`
-	QuoteAsset string           `json:"quote_asset" yaml:"quote_asset"`
-	Oracles    []sdk.AccAddress `json:"oracles" yaml:"oracles"`
+	URL string           `json:"url" yaml:"url"`
 	Active     bool             `json:"active" yaml:"active"`
 }
 
+const (
+	exampleAPICall = "https://www.metaweather.com/api/location/search/?query=boston"
+)
+
 // NewRequest returns a new Request
-func NewRequest(id, base, quote string, oracles []sdk.AccAddress, active bool) Request {
+func NewRequest(id, URL string, active bool) Request {
 	return Request{
 		RequestID:   id,
-		BaseAsset:  base,
-		QuoteAsset: quote,
-		Oracles:    oracles,
+		URL:  URL,
 		Active:     active,
 	}
 }
@@ -34,34 +33,21 @@ func NewRequest(id, base, quote string, oracles []sdk.AccAddress, active bool) R
 func (m Request) String() string {
 	return fmt.Sprintf(`Asset:
 	Request ID: %s
-	Base Asset: %s
-	Quote Asset: %s
-	Oracles: %s
+	URL: %s
 	Active: %t`,
-		m.RequestID, m.BaseAsset, m.QuoteAsset, m.Oracles, m.Active)
+		m.RequestID, m.URL, m.Active)
 }
+
 
 // Validate performs a basic validation of the request params
 func (m Request) Validate() error {
 	if strings.TrimSpace(m.RequestID) == "" {
 		return errors.New("request id cannot be blank")
 	}
-	if err := sdk.ValidateDenom(m.BaseAsset); err != nil {
-		return fmt.Errorf("invalid base asset: %w", err)
+	if strings.TrimSpace(m.URL) == "" {
+		return errors.New("url cannot be blank")
 	}
-	if err := sdk.ValidateDenom(m.QuoteAsset); err != nil {
-		return fmt.Errorf("invalid quote asset: %w", err)
-	}
-	seenOracles := make(map[string]bool)
-	for i, oracle := range m.Oracles {
-		if oracle.Empty() {
-			return fmt.Errorf("oracle %d is empty", i)
-		}
-		if seenOracles[oracle.String()] {
-			return fmt.Errorf("duplicated oracle %s", oracle)
-		}
-		seenOracles[oracle.String()] = true
-	}
+
 	return nil
 }
 

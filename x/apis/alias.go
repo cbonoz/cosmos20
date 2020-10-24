@@ -10,21 +10,14 @@ import (
 const (
 	AttributeExpiry             = types.AttributeExpiry
 	AttributeRequestID           = types.AttributeRequestID
-	AttributeRequestPrice        = types.AttributeRequestPrice
-	AttributeOracle             = types.AttributeOracle
 	AttributeValueCategory      = types.AttributeValueCategory
 	DefaultParamspace           = types.DefaultParamspace
-	EventTypeRequestPriceUpdated = types.EventTypeRequestPriceUpdated
-	EventTypeNoValidPrices      = types.EventTypeNoValidPrices
-	EventTypeOracleUpdatedPrice = types.EventTypeOracleUpdatedPrice
-	MaxExpiry                   = types.MaxExpiry
+y
 	ModuleName                  = types.ModuleName
 	QuerierRoute                = types.QuerierRoute
 	QueryGetParams              = types.QueryGetParams
 	QueryRequests                = types.QueryRequests
-	QueryOracles                = types.QueryOracles
-	QueryPrice                  = types.QueryPrice
-	QueryRawPrices              = types.QueryRawPrices
+s
 	RouterKey                   = types.RouterKey
 	StoreKey                    = types.StoreKey
 	TypeMsgPostResponse            = types.TypeMsgPostResponse
@@ -34,32 +27,19 @@ var (
 	// function aliases
 	NewKeeper                  = keeper.NewKeeper
 	NewQuerier                 = keeper.NewQuerier
-	CurrentPriceKey            = types.CurrentPriceKey
 	DefaultGenesisState        = types.DefaultGenesisState
 	DefaultParams              = types.DefaultParams
-	NewCurrentPrice            = types.NewCurrentPrice
 	NewGenesisState            = types.NewGenesisState
 	NewRequest                  = types.NewRequest
 	NewMsgPostResponse            = types.NewMsgPostResponse
 	NewParams                  = types.NewParams
-	NewPostedPrice             = types.NewPostedPrice
 	NewQueryWithRequestIDParams = types.NewQueryWithRequestIDParams
 	ParamKeyTable              = types.ParamKeyTable
-	RawPriceKey                = types.RawPriceKey
 	RegisterCodec              = types.RegisterCodec
 
 	// variable aliases
-	CurrentPricePrefix = types.CurrentPricePrefix
 	DefaultRequests     = types.DefaultRequests
-	ErrAssetNotFound   = types.ErrAssetNotFound
-	ErrEmptyInput      = types.ErrEmptyInput
-	ErrExpired         = types.ErrExpired
 	ErrInvalidRequest   = types.ErrInvalidRequest
-	ErrInvalidOracle   = types.ErrInvalidOracle
-	ErrNoValidPrice    = types.ErrNoValidPrice
-	KeyRequests         = types.KeyRequests
-	ModuleCdc          = types.ModuleCdc
-	RawPriceFeedPrefix = types.RawPriceFeedPrefix
 )
 
 type (

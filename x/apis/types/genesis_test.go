@@ -34,49 +34,8 @@ func TestGenesisStateValidate(t *testing.T) {
 				NewParams(Requests{
 					{"request", "xrp", "bnb", []sdk.AccAddress{addr}, true},
 				}),
-				[]PostedPrice{NewPostedPrice("xrp", addr, sdk.OneDec(), now)},
 			),
 			expPass: true,
-		},
-		{
-			msg: "invalid param",
-			genesisState: NewGenesisState(
-				NewParams(Requests{
-					{"", "xrp", "bnb", []sdk.AccAddress{addr}, true},
-				}),
-				[]PostedPrice{NewPostedPrice("xrp", addr, sdk.OneDec(), now)},
-			),
-			expPass: false,
-		},
-		{
-			msg: "dup request param",
-			genesisState: NewGenesisState(
-				NewParams(Requests{
-					{"request", "xrp", "bnb", []sdk.AccAddress{addr}, true},
-					{"request", "xrp", "bnb", []sdk.AccAddress{addr}, true},
-				}),
-				[]PostedPrice{NewPostedPrice("xrp", addr, sdk.OneDec(), now)},
-			),
-			expPass: false,
-		},
-		{
-			msg: "invalid posted price",
-			genesisState: NewGenesisState(
-				NewParams(Requests{}),
-				[]PostedPrice{NewPostedPrice("xrp", nil, sdk.OneDec(), now)},
-			),
-			expPass: false,
-		},
-		{
-			msg: "duplicated posted price",
-			genesisState: NewGenesisState(
-				NewParams(Requests{}),
-				[]PostedPrice{
-					NewPostedPrice("xrp", addr, sdk.OneDec(), now),
-					NewPostedPrice("xrp", addr, sdk.OneDec(), now),
-				},
-			),
-			expPass: false,
 		},
 	}
 

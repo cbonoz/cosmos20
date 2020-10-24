@@ -7,14 +7,12 @@ import (
 // GenesisState - apis state that must be provided at genesis
 type GenesisState struct {
 	Params       Params       `json:"params" yaml:"params"`
-	PostedPrices PostedPrices `json:"posted_prices" yaml:"posted_prices"`
 }
 
 // NewGenesisState creates a new genesis state for the apis module
-func NewGenesisState(p Params, pp []PostedPrice) GenesisState {
+func NewGenesisState(p Params) GenesisState {
 	return GenesisState{
 		Params:       p,
-		PostedPrices: pp,
 	}
 }
 
@@ -22,7 +20,6 @@ func NewGenesisState(p Params, pp []PostedPrice) GenesisState {
 func DefaultGenesisState() GenesisState {
 	return NewGenesisState(
 		DefaultParams(),
-		[]PostedPrice{},
 	)
 }
 
@@ -44,5 +41,5 @@ func (gs GenesisState) Validate() error {
 	if err := gs.Params.Validate(); err != nil {
 		return err
 	}
-	return gs.PostedPrices.Validate()
+	return nil
 }

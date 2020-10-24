@@ -26,7 +26,7 @@ import (
 func GetTxCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 	apisTxCmd := &cobra.Command{
 		Use:                        types.ModuleName,
-		Short:                      "Pricefeed transactions subcommands",
+		Short:                      "Apis transactions subcommands",
 		DisableFlagParsing:         true,
 		SuggestionsMinimumDistance: 2,
 		RunE:                       client.ValidateCmd,

@@ -27,15 +27,6 @@ func HandleMsgPostResponse(
 	k Keeper,
 	msg MsgPostResponse) (*sdk.Result, error) {
 
-	_, err := k.GetOracle(ctx, msg.RequestID, msg.From)
-	if err != nil {
-		return nil, err
-	}
-	_, err = k.SetPrice(ctx, msg.From, msg.RequestID, msg.Price, msg.Expiry)
-	if err != nil {
-		return nil, err
-	}
-
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(
 			sdk.EventTypeMessage,

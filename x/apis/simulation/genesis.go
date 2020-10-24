@@ -21,13 +21,13 @@ var (
 
 // RandomizedGenState generates a random GenesisState for apis
 func RandomizedGenState(simState *module.SimulationState) {
-	apisGenesis := loadPricefeedGenState(simState)
+	apisGenesis := loadApisGenState(simState)
 	fmt.Printf("Selected randomly generated %s parameters:\n%s\n", types.ModuleName, codec.MustMarshalJSONIndent(simState.Cdc, apisGenesis))
 	simState.GenState[types.ModuleName] = simState.Cdc.MustMarshalJSON(apisGenesis)
 }
 
-// loadPricefeedGenState loads a valid apis gen state
-func loadPricefeedGenState(simState *module.SimulationState) apis.GenesisState {
+// loadApisGenState loads a valid apis gen state
+func loadApisGenState(simState *module.SimulationState) apis.GenesisState {
 	var requests []apis.Request
 	var postedPrices []apis.PostedPrice
 	for _, denom := range BaseAssets {

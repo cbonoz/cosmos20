@@ -7,16 +7,15 @@ import (
 	"github.com/cbonoz/cosmos20/x/apis/types"
 )
 
-// EndBlocker updates the current apis
+// EndBlocker submits configured API calls at the end of the current block
 func EndBlocker(ctx sdk.Context, k Keeper) {
-	// Update the current price of each asset.
 	for _, request := range k.GetRequests(ctx) {
 		if !request.Active {
 			continue
 		}
 
-		err := k.SetCurrentPrices(ctx, request.RequestID)
-		if err != nil && !errors.Is(err, types.ErrNoValidPrice) {
+		err := k.MakeRequest(ctx, request.RequestID)
+		if err != nil { // && !errors.Is(err, types.ErrNoValidPrice) {
 			panic(err)
 		}
 	}

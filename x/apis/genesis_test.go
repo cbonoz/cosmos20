@@ -23,14 +23,14 @@ func (suite *GenesisTestSuite) TestValidGenState() {
 
 	suite.NotPanics(func() {
 		tApp.InitializeFromGenesisStates(
-			NewPricefeedGenStateMulti(),
+			NewApisGenStateMulti(),
 		)
 	})
 	_, addrs := app.GeneratePrivKeyAddressPairs(10)
 
 	suite.NotPanics(func() {
 		tApp.InitializeFromGenesisStates(
-			NewPricefeedGenStateWithOracles(addrs),
+			NewApisGenStateWithOracles(addrs),
 		)
 	})
 }

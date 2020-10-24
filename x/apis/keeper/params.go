@@ -24,30 +24,6 @@ func (k Keeper) GetRequests(ctx sdk.Context) types.Requests {
 	return k.GetParams(ctx).Requests
 }
 
-// GetOracles returns the oracles in the apis store
-func (k Keeper) GetOracles(ctx sdk.Context, requestID string) ([]sdk.AccAddress, error) {
-	for _, m := range k.GetRequests(ctx) {
-		if requestID == m.RequestID {
-			return m.Oracles, nil
-		}
-	}
-	return []sdk.AccAddress{}, sdkerrors.Wrap(types.ErrInvalidRequest, requestID)
-}
-
-// GetOracle returns the oracle from the store or an error if not found
-func (k Keeper) GetOracle(ctx sdk.Context, requestID string, address sdk.AccAddress) (sdk.AccAddress, error) {
-	oracles, err := k.GetOracles(ctx, requestID)
-	if err != nil {
-		return sdk.AccAddress{}, sdkerrors.Wrap(types.ErrInvalidRequest, requestID)
-	}
-	for _, addr := range oracles {
-		if address.Equals(addr) {
-			return addr, nil
-		}
-	}
-	return sdk.AccAddress{}, sdkerrors.Wrap(types.ErrInvalidOracle, address.String())
-}
-
 // GetRequest returns the request if it is in the apis system
 func (k Keeper) GetRequest(ctx sdk.Context, requestID string) (types.Request, bool) {
 	requests := k.GetRequests(ctx)

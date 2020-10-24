@@ -1,6 +1,6 @@
 <!--
 order: 0
-title: "Pricefeed Overview"
+title: "Apis Overview"
 parent:
   title: "apis"
 -->
@@ -18,4 +18,4 @@ parent:
 
 ## Abstract
 
-`x/apis` is an implementation of a Cosmos SDK Module that handles the posting of prices for various requests by a group of whitelisted oracles. At the end of each block, the median price of all oracle posted prices is determined for each request and stored.
+`x/apis` is an implementation of a Cosmos SDK Module that offers utilities for registering api calls and emitted events automatically against user-specified constraints.

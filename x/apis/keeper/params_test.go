@@ -28,23 +28,11 @@ func (suite *KeeperTestSuite) SetupTest() {
 	ctx := tApp.NewContext(true, abci.Header{Height: 1, Time: tmtime.Now()})
 	_, addrs := app.GeneratePrivKeyAddressPairs(10)
 	tApp.InitializeFromGenesisStates(
-		NewPricefeedGenStateMulti(),
+		NewApisGenStateMulti(),
 	)
 	suite.keeper = tApp.GetPriceFeedKeeper()
 	suite.ctx = ctx
 	suite.addrs = addrs
-}
-
-func (suite *KeeperTestSuite) TestGetSetOracles() {
-	params := suite.keeper.GetParams(suite.ctx)
-	suite.Equal([]sdk.AccAddress(nil), params.Requests[0].Oracles)
-	params.Requests[0].Oracles = suite.addrs
-	suite.NotPanics(func() { suite.keeper.SetParams(suite.ctx, params) })
-	params = suite.keeper.GetParams(suite.ctx)
-	suite.Equal(suite.addrs, params.Requests[0].Oracles)
-	addr, err := suite.keeper.GetOracle(suite.ctx, params.Requests[0].RequestID, suite.addrs[0])
-	suite.NoError(err)
-	suite.Equal(suite.addrs[0], addr)
 }
 
 func TestKeeperTestSuite(t *testing.T) {
