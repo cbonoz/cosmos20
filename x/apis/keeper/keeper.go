@@ -41,3 +41,14 @@ func NewKeeper(
 func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", fmt.Sprintf("x/%s", types.ModuleName))
 }
+
+
+// MakeRequests ...
+// Makes the api calls configured in the param store broadcasting events for each completed result
+func (k Keeper) MakeRequest(ctx sdk.Context, requestID string) error {
+	// requests := k.GetRequests(ctx)
+	// TODO: create requests
+
+
+	return nil
+}

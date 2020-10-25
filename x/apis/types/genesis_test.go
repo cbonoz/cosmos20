@@ -2,22 +2,11 @@ package types
 
 import (
 	"testing"
-	"time"
 
 	"github.com/stretchr/testify/require"
-
-	tmtypes "github.com/tendermint/tendermint/types"
-
-	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 func TestGenesisStateValidate(t *testing.T) {
-	now := time.Now()
-	mockPrivKey := tmtypes.NewMockPV()
-	pubkey, err := mockPrivKey.GetPubKey()
-	require.NoError(t, err)
-	addr := sdk.AccAddress(pubkey.Address())
-
 	testCases := []struct {
 		msg          string
 		genesisState GenesisState

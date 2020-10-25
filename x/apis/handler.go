@@ -3,6 +3,8 @@ package apis
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+
+	"github.com/cbonoz/cosmos20/x/apis/types"
 )
 
 // NewHandler handles all apis type messages
@@ -10,8 +12,8 @@ func NewHandler(k Keeper) sdk.Handler {
 	return func(ctx sdk.Context, msg sdk.Msg) (*sdk.Result, error) {
 		ctx = ctx.WithEventManager(sdk.NewEventManager())
 		switch msg := msg.(type) {
-		case MsgPostResponse:
-			return HandleMsgPostResponse(ctx, k, msg)
+			case types.MsgPostResponse:
+				return HandleMsgPostResponse(ctx, k, msg)
 		default:
 			return nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "unrecognized %s message type: %T", ModuleName, msg)
 		}
@@ -25,7 +27,7 @@ func NewHandler(k Keeper) sdk.Handler {
 func HandleMsgPostResponse(
 	ctx sdk.Context,
 	k Keeper,
-	msg MsgPostResponse) (*sdk.Result, error) {
+	msg types.MsgPostResponse) (*sdk.Result, error) {
 
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(

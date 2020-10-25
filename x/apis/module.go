@@ -161,7 +161,7 @@ func (AppModuleBasic) RandomizedParams(r *rand.Rand) []sim.ParamChange {
 
 // RegisterStoreDecoder registers a decoder for price feed module's types
 func (AppModuleBasic) RegisterStoreDecoder(sdr sdk.StoreDecoderRegistry) {
-	sdr[StoreKey] = simulation.DecodeStore
+	// sdr[StoreKey] = simulation.DecodeStore
 }
 
 // WeightedOperations returns the all the price feed module operations with their respective weights.

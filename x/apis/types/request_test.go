@@ -5,15 +5,12 @@ import (
 	"github.com/stretchr/testify/require"
 
 	tmtypes "github.com/tendermint/tendermint/types"
-
-	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 func TestRequestValidate(t *testing.T) {
 	mockPrivKey := tmtypes.NewMockPV()
 	pubkey, err := mockPrivKey.GetPubKey()
 	require.NoError(t, err)
-	addr := sdk.AccAddress(pubkey.Address())
 
 	testCases := []struct {
 		msg     string

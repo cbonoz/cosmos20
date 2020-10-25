@@ -8,10 +8,9 @@ import (
 )
 
 const (
-	AttributeExpiry             = types.AttributeExpiry
 	AttributeRequestID           = types.AttributeRequestID
 	AttributeValueCategory      = types.AttributeValueCategory
-	DefaultParamspace           = types.DefaultParamspace
+	// DefaultParamspace           = types.DefaultParamspace
 y
 	ModuleName                  = types.ModuleName
 	QuerierRoute                = types.QuerierRoute
@@ -39,7 +38,7 @@ var (
 
 	// variable aliases
 	DefaultRequests     = types.DefaultRequests
-	ErrInvalidRequest   = types.ErrInvalidRequest
+	ModuleCdc                  = types.ModuleCdc
 )
 
 type (

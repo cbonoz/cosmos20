@@ -1,10 +1,8 @@
 package apis
 
 import (
-	"errors"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cbonoz/cosmos20/x/apis/types"
 )
 
 // EndBlocker submits configured API calls at the end of the current block

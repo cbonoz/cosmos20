@@ -1,19 +1,14 @@
 package simulation
 
 import (
-	"fmt"
-	"math/rand"
 	"time"
 
-	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/simapp/helpers"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 
 	"github.com/cbonoz/cosmos20/x/apis/keeper"
-	"github.com/cbonoz/cosmos20/x/apis/types"
 )
 
 // Simulation operation weights constants
@@ -32,21 +27,8 @@ const (
 func WeightedOperations(
 	appParams simulation.AppParams, cdc *codec.Codec, ak auth.AccountKeeper, k keeper.Keeper,
 ) simulation.WeightedOperations {
-	var weightMsgUpdatePrices int
-	// var numBlocks int
 
-	appParams.GetOrGenerate(cdc, OpWeightMsgUpdatePrices, &weightMsgUpdatePrices, nil,
-		func(_ *rand.Rand) {
-			weightMsgUpdatePrices = appparams.DefaultWeightMsgUpdatePrices
-		},
-	)
-
-	return simulation.WeightedOperations{
-		simulation.NewWeightedOperation(
-			weightMsgUpdatePrices,
-			SimulateMsgUpdatePrices(ak, k, 10000),
-		),
-	}
+	return nil
 }
 
 // getExpiryTime gets a price expiry time by taking the current time and adding a delta to it

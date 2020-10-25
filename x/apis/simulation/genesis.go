@@ -2,12 +2,9 @@ package simulation
 
 import (
 	"fmt"
-	"time"
 
 	"github.com/cosmos/cosmos-sdk/codec"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/cosmos/cosmos-sdk/x/simulation"
 
 	"github.com/cbonoz/cosmos20/x/apis/types"
 	apis "github.com/cbonoz/cosmos20/x/apis/types"
@@ -25,5 +22,5 @@ func RandomizedGenState(simState *module.SimulationState) {
 func loadApisGenState(simState *module.SimulationState) apis.GenesisState {
 	var requests []apis.Request
 	params := apis.NewParams(requests)
-	return apis.NewGenesisState(params, postedPrices)
+	return apis.NewGenesisState(params)
 }
