@@ -1,11 +1,11 @@
 package apis_test
 
 import (
-	"testing"
+	// "testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/cbonoz/cosmos20/app"
+	// "github.com/cbonoz/cosmos20/app"
 	"github.com/cbonoz/cosmos20/x/apis"
 
 	"github.com/stretchr/testify/suite"
@@ -18,23 +18,16 @@ type GenesisTestSuite struct {
 	keeper apis.Keeper
 }
 
-func (suite *GenesisTestSuite) TestValidGenState() {
-	tApp := app.NewTestApp()
+// func (suite *GenesisTestSuite) TestValidGenState() {
+// 	tApp := app.NewTestApp()
 
-	suite.NotPanics(func() {
-		tApp.InitializeFromGenesisStates(
-			NewApisGenStateMulti(),
-		)
-	})
-	_, addrs := app.GeneratePrivKeyAddressPairs(10)
+// 	suite.NotPanics(func() {
+// 		tApp.InitializeFromGenesisStates(
+// 			NewApisGenStateMulti(),
+// 		)
+// 	})
 
-	suite.NotPanics(func() {
-		tApp.InitializeFromGenesisStates(
-			NewApisGenStateWithOracles(addrs),
-		)
-	})
-}
 
-func TestGenesisTestSuite(t *testing.T) {
-	suite.Run(t, new(GenesisTestSuite))
-}
+// func TestGenesisTestSuite(t *testing.T) {
+// 	suite.Run(t, new(GenesisTestSuite))
+// }
