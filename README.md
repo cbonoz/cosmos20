@@ -20,7 +20,12 @@ Going after the build a module challenge for the cosmos hackatom contest.
 
 -->
 
+### Running the project
+
+`go build -v ./...`
+
 ### Running tests
+
 `go test -v ./...`
 
 ### Dev notes
