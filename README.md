@@ -34,6 +34,7 @@ Going after the build a module challenge for the cosmos hackatom contest.
 
 ### Useful links
 
+- https://www.youtube.com/watch?v=PCSzgJCgwdE
 - https://cosmos.network/intro
 - https://github.com/cosmos/cosmos-sdk
 - https://github.com/tendermint/starport/blob/develop/docs/1%20Introduction/2%20Install.md
