@@ -3,8 +3,6 @@ package cli
 import (
 	"bufio"
 	"fmt"
-	"strconv"
-	"time"
 
 	"github.com/spf13/cobra"
 
@@ -16,8 +14,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/cosmos/cosmos-sdk/x/auth/client/utils"
-
-	tmtime "github.com/tendermint/tendermint/types/time"
 
 	"github.com/cbonoz/cosmos20/x/apis/types"
 )
@@ -42,9 +38,9 @@ func GetTxCmd(storeKey string, cdc *codec.Codec) *cobra.Command {
 // GetCmdPostResponse cli command for posting prices.
 func GetCmdPostResponse(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use:   "postprice [requestID] [price] [expiry]",
-		Short: "post the latest price for a particular request with a given expiry as a UNIX time",
-		Example: fmt.Sprintf("%s tx %s postprice bnb:usd 25 9999999999 --from validator",
+		Use:   "postresponse [requestID] [response]",
+		Short: "post the response for a particular api call",
+		Example: fmt.Sprintf("%s tx %s postresponse 123 {} --from validator",
 			version.ClientName, types.ModuleName),
 		Args: cobra.ExactArgs(3),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -52,24 +48,8 @@ func GetCmdPostResponse(cdc *codec.Codec) *cobra.Command {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
 
-			price, err := sdk.NewDecFromStr(args[1])
-			if err != nil {
-				return err
-			}
-
-			expiryInt, err := strconv.ParseInt(args[2], 10, 64)
-			if err != nil {
-				return fmt.Errorf("invalid expiry %s: %w", args[2], err)
-			}
-
-			if expiryInt > types.MaxExpiry {
-				return fmt.Errorf("invalid expiry; got %d, max: %d", expiryInt, types.MaxExpiry)
-			}
-
-			expiry := tmtime.Canonical(time.Unix(expiryInt, 0))
-
-			msg := types.NewMsgPostResponse(cliCtx.GetFromAddress(), args[0], price, expiry)
-			if err = msg.ValidateBasic(); err != nil {
+			msg := types.NewMsgPostResponse(cliCtx.GetFromAddress(), args[0], "{}")
+			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
 

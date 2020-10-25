@@ -32,7 +32,7 @@ func TestGenesisStateValidate(t *testing.T) {
 			msg: "valid genesis",
 			genesisState: NewGenesisState(
 				NewParams(Requests{
-					{"request", "xrp", "bnb", []sdk.AccAddress{addr}, true},
+					{"request", "{}", true},
 				}),
 			),
 			expPass: true,

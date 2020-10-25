@@ -12,14 +12,12 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	"github.com/cosmos/cosmos-sdk/x/simulation"
 
-	appparams "github.com/cbonoz/cosmos20/app/params"
 	"github.com/cbonoz/cosmos20/x/apis/keeper"
 	"github.com/cbonoz/cosmos20/x/apis/types"
 )
 
 // Simulation operation weights constants
 const (
-	OpWeightMsgUpdatePrices = "op_weight_msg_update_prices"
 
 	// Block time params are un-exported constants in cosmos-sdk/x/simulation.
 	// Copy them here in lieu of importing them.

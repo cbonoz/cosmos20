@@ -20,6 +20,9 @@ Going after the build a module challenge for the cosmos hackatom contest.
 
 -->
 
+### Running tests
+`go test -v ./...`
+
 ### Dev notes
 
 - brew install tendermint/tap/starport
