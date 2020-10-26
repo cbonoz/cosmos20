@@ -4,13 +4,10 @@ import (
 	"testing"
 	"github.com/stretchr/testify/require"
 
-	tmtypes "github.com/tendermint/tendermint/types"
+	// tmtypes "github.com/tendermint/tendermint/types"
 )
 
 func TestRequestValidate(t *testing.T) {
-	mockPrivKey := tmtypes.NewMockPV()
-	pubkey, err := mockPrivKey.GetPubKey()
-	require.NoError(t, err)
 
 	testCases := []struct {
 		msg     string

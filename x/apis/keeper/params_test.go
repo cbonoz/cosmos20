@@ -30,7 +30,6 @@ func (suite *KeeperTestSuite) SetupTest() {
 	tApp.InitializeFromGenesisStates(
 		NewApisGenStateMulti(),
 	)
-	suite.keeper = tApp.GetPriceFeedKeeper()
 	suite.ctx = ctx
 	suite.addrs = addrs
 }
