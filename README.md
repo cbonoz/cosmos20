@@ -1,4 +1,8 @@
-<!--CosmosHub API Module
+<p align='center'>
+<img src="./img/apikit.png"/>
+</p>
+
+## CosmosHub API Module
 
 ### Concept
 
@@ -17,8 +21,6 @@ Going after the build a module challenge for the cosmos hackatom contest.
 1. Add the /x/apis module to your app
 2. Configure the module with your external API's and desired parameters.
 3. Create subscribers to process emitted events.
-
--->
 
 ### Running the project
 
