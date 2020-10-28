@@ -8,13 +8,15 @@
 
 Cosmos API module (apis) - interact with arbitrary api's from your cosmos app using this prebuilt cosmos hub module.
 
-Going after the build a module challenge for the cosmos hackatom contest.
+Going after the build a module challenge for the cosmos hackatom contest for increasing Cosmos utility and go to market.
 
-### Use cases
+Note this is a prototype/hackathon concept module.
 
-- Make api calls in response to key events such as block starts or ends, arbitrary messages, or ad-hoc queries.
-- Perform programmatic access to other services such as other blockchains, third party api's
-- Provide a simple interface to configure a set of API-based commands.
+### Value adds
+
+- Easily make api calls in response to key events such as block starts or ends, arbitrary messages, or ad-hoc queries.
+- Perform programmatic access to other services such as other blockchains, third party api's (increase  interoperability).
+- Provide a simple interface to configure a set of API-based commands even without detailed knowledge of go http or cosmos. Simply provide the urls and payloads and the module can take care of the rest.
 
 ### Usage
 
