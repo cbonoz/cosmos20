@@ -10,7 +10,7 @@ import (
 
 // Request an asset in the apis
 type Request struct {
-	// TODO: rename to ID
+	// TODO: rename ID and support additional request params/configs.
 	RequestID   string           `json:"request_id" yaml:"request_id"`
 	URL string           `json:"url" yaml:"url"`
 	Active     bool             `json:"active" yaml:"active"`

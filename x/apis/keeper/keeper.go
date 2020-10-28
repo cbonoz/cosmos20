@@ -2,6 +2,8 @@ package keeper
 
 import (
 	"fmt"
+	"net/http"
+	"io/ioutil"
 
 	"github.com/tendermint/tendermint/libs/log"
 
@@ -43,12 +45,23 @@ func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 }
 
 
-// MakeRequests ...
 // Makes the api calls configured in the param store broadcasting events for each completed result
-func (k Keeper) MakeRequest(ctx sdk.Context, requestID string) error {
-	// requests := k.GetRequests(ctx)
+func (k Keeper) MakeRequest(ctx sdk.Context, requestID string) (string, error) {
+	requests := k.GetRequests(ctx)
 	// TODO: create requests
 
+	for i := range requests {
+		if requests[i].RequestID == requestID {
+			resp, err := http.Get(requests[i].URL)
+			if (err != nil) {
+				return "", err
+			}
+			defer resp.Body.Close()
+			body, err := ioutil.ReadAll(resp.Body)
+			return string(body), err
+		}
+	}
 
-	return nil
+
+	return "", fmt.Errorf("No request with id found in config, ID: %s", requestID)
 }

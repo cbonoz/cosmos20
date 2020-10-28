@@ -26,6 +26,7 @@ import (
 	"github.com/cbonoz/cosmos20/x/apis"
 	cosmos20keeper "github.com/cbonoz/cosmos20/x/cosmos20/keeper"
 	cosmos20types "github.com/cbonoz/cosmos20/x/cosmos20/types"
+	// apistypes "github.com/cbonoz/cosmos20/x/apis/types"
   // this line is used by starport scaffolding # 1
 )
 
@@ -77,6 +78,7 @@ type NewApp struct {
 
 	accountKeeper  auth.AccountKeeper
 	bankKeeper     bank.Keeper
+	apisKeeper 		apis.Keeper
 	stakingKeeper  staking.Keeper
 	supplyKeeper   supply.Keeper
 	paramsKeeper   params.Keeper
@@ -105,7 +107,8 @@ func NewInitApp(
     staking.StoreKey,
 	supply.StoreKey,
     params.StoreKey,
-    cosmos20types.StoreKey,
+	cosmos20types.StoreKey,
+	apis.StoreKey,
     // this line is used by starport scaffolding # 5
   )
 
@@ -124,6 +127,7 @@ func NewInitApp(
 	app.subspaces[auth.ModuleName] = app.paramsKeeper.Subspace(auth.DefaultParamspace)
 	app.subspaces[bank.ModuleName] = app.paramsKeeper.Subspace(bank.DefaultParamspace)
 	app.subspaces[staking.ModuleName] = app.paramsKeeper.Subspace(staking.DefaultParamspace)
+	app.subspaces[apis.ModuleName] = app.paramsKeeper.Subspace(apis.DefaultParamspace)
 	// this line is used by starport scaffolding # 5.1
 
 	app.accountKeeper = auth.NewAccountKeeper(
@@ -154,6 +158,12 @@ func NewInitApp(
 		app.subspaces[staking.ModuleName],
 	)
 
+	app.apisKeeper = apis.NewKeeper(
+		app.cdc,
+		keys[apis.StoreKey],
+		app.subspaces[apis.ModuleName],
+	)
+
 	// this line is used by starport scaffolding # 5.2
 
 	app.stakingKeeper = *stakingKeeper.SetHooks(
@@ -177,6 +187,7 @@ func NewInitApp(
 		supply.NewAppModule(app.supplyKeeper, app.accountKeeper),
 		cosmos20.NewAppModule(app.cosmos20Keeper, app.bankKeeper),
 		staking.NewAppModule(app.stakingKeeper, app.accountKeeper, app.supplyKeeper),
+		apis.NewAppModule(app.apisKeeper, app.accountKeeper),
     // this line is used by starport scaffolding # 6
 	)
 

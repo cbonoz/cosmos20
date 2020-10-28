@@ -10,7 +10,7 @@ import (
 const (
 	AttributeRequestID           = types.AttributeRequestID
 	AttributeValueCategory      = types.AttributeValueCategory
-	// DefaultParamspace           = types.DefaultParamspace
+	DefaultParamspace           = types.DefaultParamspace
 y
 	ModuleName                  = types.ModuleName
 	QuerierRoute                = types.QuerierRoute

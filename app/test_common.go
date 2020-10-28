@@ -19,6 +19,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth"
 	authexported "github.com/cosmos/cosmos-sdk/x/auth/exported"
+	"github.com/cbonoz/cosmos20/x/apis"
 	"github.com/cosmos/cosmos-sdk/x/bank"
 	// "github.com/cosmos/cosmos-sdk/x/crisis"
 	// "github.com/cosmos/cosmos-sdk/x/distribution"
@@ -57,6 +58,7 @@ func NewTestApp() TestApp {
 // nolint
 func (tApp TestApp) GetAccountKeeper() auth.AccountKeeper { return tApp.accountKeeper }
 func (tApp TestApp) GetBankKeeper() bank.Keeper           { return tApp.bankKeeper }
+func (tApp TestApp) GetApisKeeper() apis.Keeper { return tApp.apisKeeper }
 // func (tApp TestApp) GetSupplyKeeper() supply.Keeper       { return tApp.supplyKeeper }
 // func (tApp TestApp) GetStakingKeeper() staking.Keeper     { return tApp.stakingKeeper }
 // func (tApp TestApp) GetSlashingKeeper() slashing.Keeper   { return tApp.slashingKeeper }
