@@ -1,5 +1,5 @@
 <p align='center'>
-<img src="./img/apikit.png"/>
+    <img src="./img/apikit.png"/>
 </p>
 
 ## CosmosHub API Module
@@ -18,11 +18,12 @@ Note this is a prototype/hackathon concept module.
 - Perform programmatic access to other services such as other blockchains, third party api's (increase  interoperability).
 - Provide a simple interface to configure a set of API-based commands even without detailed knowledge of go http or cosmos. Simply provide the urls and payloads and the module can take care of the rest.
 
-### Usage
+### Integrating with your project
 
 1. Add the /x/apis module to your app
 2. Configure the module with your external API's and desired parameters.
 3. Create subscribers to process emitted events.
+4. Edit or fork the module however you wish.
 
 ### Running the project
 
@@ -35,6 +36,7 @@ Note this is a prototype/hackathon concept module.
 ### Dev notes
 
 - brew install tendermint/tap/starport
+- starport serve
 
 ### Useful links
 
