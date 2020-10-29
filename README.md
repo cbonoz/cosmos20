@@ -15,7 +15,7 @@ Note this is a prototype/hackathon concept module.
 ### Value adds
 
 - Easily make api calls in response to key events such as block starts or ends, arbitrary messages, or ad-hoc queries.
-- Perform programmatic access to other services such as other blockchains, third party api's (increase  interoperability).
+- Perform programmatic access to other services such as other blockchains, third party api's (increase interoperability).
 - Provide a simple interface to configure a set of API-based commands even without detailed knowledge of go http or cosmos. Simply provide the urls and payloads and the module can take care of the rest.
 
 ### Integrating with your project
