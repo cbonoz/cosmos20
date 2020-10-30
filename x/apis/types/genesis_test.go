@@ -21,7 +21,7 @@ func TestGenesisStateValidate(t *testing.T) {
 			msg: "valid genesis",
 			genesisState: NewGenesisState(
 				NewParams(Requests{
-					{"request", "{}", true},
+					{"request", exampleAPICall, "GET", "{}", true},
 				}),
 			),
 			expPass: true,

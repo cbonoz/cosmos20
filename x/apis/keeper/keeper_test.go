@@ -19,7 +19,7 @@ func TestKeeper_BasicGetRequest(t *testing.T) {
 
 	mp := types.Params{
 		Requests: types.Requests{
-			types.Request{RequestID: requestId, URL: exampleAPICall, Active: true},
+			types.NewRequest(requestId, exampleAPICall, "GET", "", true),
 		},
 	}
 	keeper.SetParams(ctx, mp)

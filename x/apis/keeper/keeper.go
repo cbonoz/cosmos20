@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"net/http"
 	"io/ioutil"
+	"io"
+	"strings"
 
 	"github.com/tendermint/tendermint/libs/log"
 
@@ -48,11 +50,20 @@ func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 // Makes the api calls configured in the param store broadcasting events for each completed result
 func (k Keeper) MakeRequest(ctx sdk.Context, requestID string) (string, error) {
 	requests := k.GetRequests(ctx)
+	client := &http.Client{}
 	// TODO: create requests
 
 	for i := range requests {
 		if requests[i].RequestID == requestID {
-			resp, err := http.Get(requests[i].URL)
+			request := requests[i]
+			var reader io.Reader
+			if (request.Body != "") {
+				reader = strings.NewReader(request.Body)
+			} else {
+				reader = nil
+			}
+			req, err := http.NewRequest(request.Method, request.URL, reader)
+			resp, err := client.Do(req)
 			if (err != nil) {
 				return "", err
 			}

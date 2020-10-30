@@ -13,6 +13,8 @@ type Request struct {
 	// TODO: rename ID and support additional request params/configs.
 	RequestID   string           `json:"request_id" yaml:"request_id"`
 	URL string           `json:"url" yaml:"url"`
+	Method string 		`json:"method" yaml:"method"`
+	Body string 		`json:"body" yaml:"body"`
 	Active     bool             `json:"active" yaml:"active"`
 }
 
@@ -21,10 +23,12 @@ const (
 )
 
 // NewRequest returns a new Request
-func NewRequest(id, URL string, active bool) Request {
+func NewRequest(id, URL string, Method string, Body string, active bool) Request {
 	return Request{
 		RequestID:   id,
 		URL:  URL,
+		Method: Method,
+		Body: Body,
 		Active:     active,
 	}
 }
