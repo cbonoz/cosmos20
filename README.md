@@ -25,6 +25,23 @@ Note this is a prototype/hackathon concept module.
 3. Create subscribers to process emitted events.
 4. Edit or fork the module however you wish.
 
+### Example usage
+
+1. Adjust `DefaultParams` in params.go of the apis module (currently configured in the cosmos20 app to poll for weather and emit an event).
+2. `starport serve -v`
+
+You should see these requests going out in response to the EndBlock event.
+
+<img src="./img/debug.png" width=600>
+
+3. Subscribe to the events via the tendermint websocket.
+
+<img src="./img/subscribe.png" width=600>
+
+Can see evidence of the events emitted here.
+
+<img src="./img/event.png" width=600>
+
 ### Running the project
 
 `go build -v ./...`

@@ -26,7 +26,15 @@ func NewParams(requests Requests) Params {
 
 // DefaultParams default params for apis
 func DefaultParams() Params {
-	return NewParams(DefaultRequests)
+	// Example
+	mp := Params{
+		Requests: Requests{
+			NewRequest("123", exampleAPICall, "GET", "", true),
+		},
+	}
+			
+	return mp
+	// return NewParams(DefaultRequests)
 }
 
 // ParamKeyTable Key declaration for parameters

@@ -23,7 +23,7 @@ const (
 )
 
 // NewRequest returns a new Request
-func NewRequest(id, URL string, Method string, Body string, active bool) Request {
+func NewRequest(id string, URL string, Method string, Body string, active bool) Request {
 	return Request{
 		RequestID:   id,
 		URL:  URL,

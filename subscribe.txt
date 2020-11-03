@@ -1,0 +1,5 @@
+ex 1:
+{ "jsonrpc": "2.0", "method": "subscribe", "params": ["tm.event='NewBlock'"], "id": 1 }
+
+apis:
+{ "jsonrpc": "2.0", "method": "subscribe", "params": ["tm.event='MsgPostResponse'"], "id": 1 }

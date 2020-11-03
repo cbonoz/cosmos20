@@ -32,6 +32,7 @@ import (
 
 const appName = "cosmos20"
 
+
 var (
 	DefaultCLIHome = os.ExpandEnv("$HOME/.cosmos20cli")
 	DefaultNodeHome = os.ExpandEnv("$HOME/.cosmos20d")
@@ -164,6 +165,7 @@ func NewInitApp(
 		app.subspaces[apis.ModuleName],
 	)
 
+
 	// this line is used by starport scaffolding # 5.2
 
 	app.stakingKeeper = *stakingKeeper.SetHooks(
@@ -193,6 +195,7 @@ func NewInitApp(
 
 	app.mm.SetOrderEndBlockers(
 		staking.ModuleName,
+		apis.ModuleName,
 		// this line is used by starport scaffolding # 6.1
 	)
 
@@ -204,6 +207,7 @@ func NewInitApp(
 		cosmos20types.ModuleName,
 		supply.ModuleName,
 		genutil.ModuleName,
+		apis.ModuleName,
     // this line is used by starport scaffolding # 7
 	)
 
