@@ -14,9 +14,12 @@ Note this is a prototype/hackathon concept module.
 
 ### Value adds
 
-- Easily make api calls in response to key events such as block starts or ends, arbitrary messages, or ad-hoc queries.
+This module is for you if:
+
+- You want to easily make api calls in response to key events such as block starts or ends, arbitrary messages, or ad-hoc queries.
 - Perform programmatic access to other services such as other blockchains, third party api's (increase interoperability).
 - Provide a simple interface to configure a set of API-based commands even without detailed knowledge of go http or cosmos. Simply provide the urls and payloads and the module can take care of the rest.
+- Centralize all your API-related work in your cosmos application.
 
 ### Integrating with your project
 
